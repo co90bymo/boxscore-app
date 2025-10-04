@@ -1,8 +1,42 @@
 [
   {
-    "name": "Christian",
-    "points": 0,
-    "rebounds": 0,
-    "assists": 0
+    "PLAYER": "christian",
+    "GAMES": 2,
+    "MIN": 0,
+    "PTS": 0,
+    "AST": 2,
+    "OREB": 1,
+    "DREB": 4,
+    "TO": 0,
+    "STL": 0,
+    "BLK": 0,
+    "2PTA": 3,
+    "2PTM": 2,
+    "3PTA": 2,
+    "3PTM": 1,
+    "FTA": 10,
+    "FTM": 8,
+    "+/-": 0,
+    "PF": 0
+  },
+  {
+    "PLAYER": "karl",
+    "GAMES": 1,
+    "MIN": 0,
+    "PTS": 0,
+    "AST": 1,
+    "OREB": 4,
+    "DREB": 5,
+    "TO": 0,
+    "STL": 0,
+    "BLK": 0,
+    "2PTA": 5,
+    "2PTM": 4,
+    "3PTA": 2,
+    "3PTM": 1,
+    "FTA": 5,
+    "FTM": 4,
+    "+/-": 0,
+    "PF": 0
   }
 ]
