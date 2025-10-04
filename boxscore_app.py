@@ -1,7 +1,7 @@
 import streamlit as st
 import json
 import os
-
+print("test")
 # --- Player class ---
 class Player:
     def __init__(self, name: str, points=0, rebounds=0, assists=0):
