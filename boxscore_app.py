@@ -7,7 +7,7 @@ import os
 # -------------------
 # Set True if you are the admin (can add/remove players)
 # Set False for friends/viewers (read-only mode)
-IS_ADMIN = True
+IS_ADMIN = False
 
 PLAYER_FILE = "players.json"
 
