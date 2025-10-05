@@ -207,30 +207,47 @@ if page == "Add Game":
         if st.session_state.current_game is None:
             game_name_input = st.text_input("Enter game name")
             if game_name_input:
-                player_options = [p.name for p in st.session_state.players]
-                selected_players = st.multiselect(
-                    "Select players for this game",
-                    options=player_options,
-                    default=st.session_state.selected_players_temp,
-                )
-                st.session_state.selected_players_temp = selected_players
+                st.markdown("### Select Players")
 
+                # Compute available and selected players
+                available_players = [
+                    p.name for p in st.session_state.players
+                    if p.name not in st.session_state.selected_players_temp
+                ]
+                selected_players = st.session_state.selected_players_temp
+
+                # Display available players as clickable buttons (grid)
+                if available_players:
+                    st.markdown("**Available Players:**")
+                    cols = st.columns(5)
+                    for i, name in enumerate(available_players):
+                        if cols[i % 5].button(name, key=f"select_{name}"):
+                            st.session_state.selected_players_temp.append(name)
+                            st.rerun()
+                else:
+                    st.info("All players selected.")
+
+                # Display selected players with option to remove
                 if selected_players:
-                    st.markdown("**Selected players for this game:**")
-                    st.write(", ".join(selected_players))
+                    st.markdown("**✅ Selected Players:**")
+                    cols_selected = st.columns(5)
+                    for i, name in enumerate(selected_players):
+                        if cols_selected[i % 5].button(f"❌ {name}", key=f"deselect_{name}"):
+                            st.session_state.selected_players_temp.remove(name)
+                            st.rerun()
 
-                if st.button("Confirm Players"):
-                    if not selected_players:
-                        st.warning("Select at least one player to start the game.")
-                    else:
+                # Confirm selection
+                if st.session_state.selected_players_temp:
+                    if st.button("Confirm Players"):
                         new_game_id = len(st.session_state.games) + 1
-                        selected_players_objs = [
-                            p for p in st.session_state.players if p.name in selected_players
+                        selected_objs = [
+                            p for p in st.session_state.players
+                            if p.name in st.session_state.selected_players_temp
                         ]
                         st.session_state.current_game = Game(
                             game_id=new_game_id,
                             name=game_name_input,
-                            players=selected_players_objs
+                            players=selected_objs
                         )
                         st.session_state.selected_players_temp = []
                         st.success(f"Game '{game_name_input}' started!")
