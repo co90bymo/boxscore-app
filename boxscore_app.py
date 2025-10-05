@@ -1,6 +1,7 @@
 import streamlit as st
 import json
 import os
+from game_logic import run_game  # import the extracted function
 
 # -------------------
 # Configuration
@@ -202,21 +203,19 @@ if page == "Add Game":
         else:
             st.info("No players yet. Admin needs to add players.")
 
-    # Game creation and in-game view
+    # Game creation
     if IS_ADMIN:
         if st.session_state.current_game is None:
             game_name_input = st.text_input("Enter game name")
             if game_name_input:
                 st.markdown("### Select Players")
 
-                # Compute available and selected players
                 available_players = [
                     p.name for p in st.session_state.players
                     if p.name not in st.session_state.selected_players_temp
                 ]
                 selected_players = st.session_state.selected_players_temp
 
-                # Display available players as clickable buttons (grid)
                 if available_players:
                     st.markdown("**Available Players:**")
                     cols = st.columns(5)
@@ -227,7 +226,6 @@ if page == "Add Game":
                 else:
                     st.info("All players selected.")
 
-                # Display selected players with option to remove
                 if selected_players:
                     st.markdown("**✅ Selected Players:**")
                     cols_selected = st.columns(5)
@@ -236,7 +234,6 @@ if page == "Add Game":
                             st.session_state.selected_players_temp.remove(name)
                             st.rerun()
 
-                # Confirm selection
                 if st.session_state.selected_players_temp:
                     if st.button("Confirm Players"):
                         new_game_id = len(st.session_state.games) + 1
@@ -253,32 +250,8 @@ if page == "Add Game":
                         st.success(f"Game '{game_name_input}' started!")
                         st.rerun()
         else:
-            st.info(f"Game '{st.session_state.current_game.name}' is currently running.")
-            st.markdown("### Players in this game:")
-            for p in st.session_state.current_game.players:
-                st.write(f"👤 {p.name}")
-
-            # End Game with confirmation
-            if not st.session_state.confirm_end_game:
-                if st.button("End Game"):
-                    st.session_state.confirm_end_game = True
-                    st.rerun()
-            else:
-                st.warning("Are you sure you want to end this game?")
-                col1, col2 = st.columns(2)
-                with col1:
-                    if st.button("✅ Yes, End Game"):
-                        st.session_state.current_game.finished = True
-                        st.session_state.games.append(st.session_state.current_game)
-                        save_games(st.session_state.games)
-                        st.session_state.current_game = None
-                        st.session_state.confirm_end_game = False
-                        st.success("Game ended.")
-                        st.rerun()
-                with col2:
-                    if st.button("❌ Cancel"):
-                        st.session_state.confirm_end_game = False
-                        st.rerun()
+            # Call the extracted in-game logic
+            run_game(st.session_state.current_game, save_games)
 
     # Display all games
     st.markdown("### All Games:")
@@ -300,7 +273,6 @@ if page == "Add Game":
 elif page == "Player Stats":
     st.title("Player Stats")
 
-    # Toggle between Total and Per-Game stats
     view_mode = st.radio("Display Mode", ["Total", "Per Game"], horizontal=True)
 
     if st.session_state.players:
@@ -310,11 +282,9 @@ elif page == "Player Stats":
             games = d.get("GAMES", 1) or 1
             scale = 1 if view_mode == "Total" else games
 
-            # Scale counting stats
             for key in ["MIN", "AST", "OREB", "DREB", "TO", "STL", "BLK", "PF", "+/-"]:
                 d[key] = d.get(key, 0) / scale
 
-            # Scale shooting stats
             two_ptm = d["2PTM"] / scale
             two_pta = d["2PTA"] / scale
             three_ptm = d["3PTM"] / scale
@@ -322,12 +292,10 @@ elif page == "Player Stats":
             ftm = d["FTM"] / scale
             fta = d["FTA"] / scale
 
-            # Percentages
             two_pt_pct = (two_ptm / two_pta * 100) if two_pta > 0 else 0
             three_pt_pct = (three_ptm / three_pta * 100) if three_pta > 0 else 0
             ft_pct = (ftm / fta * 100) if fta > 0 else 0
 
-            # Formatting
             if view_mode == "Total":
                 d["2PT"] = f'{int(two_ptm)}-{int(two_pta)} ({two_pt_pct:.0f}%)'
                 d["3PT"] = f'{int(three_ptm)}-{int(three_pta)} ({three_pt_pct:.0f}%)'
@@ -337,7 +305,6 @@ elif page == "Player Stats":
                 d["3PT"] = f'{three_ptm:.1f}-{three_pta:.1f} ({three_pt_pct:.0f}%)'
                 d["FT"] = f'{ftm:.1f}-{fta:.1f} ({ft_pct:.0f}%)'
 
-            # Points & Rebounds
             pts = (two_ptm * 2) + (three_ptm * 3) + ftm
             d["REB"] = d.get("OREB", 0) + d.get("DREB", 0)
 
