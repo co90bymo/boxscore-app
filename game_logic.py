@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 
-def run_game(current_game, save_games_func):
+def run_game(current_game, save_games_func, save_players):
     """
     Handles the in-game UI and stat tracking for the given game.
     Updates player stats in st.session_state when the game ends.
@@ -73,6 +73,9 @@ def run_game(current_game, save_games_func):
     st.dataframe(df, use_container_width=True)
 
     # End Game with confirmation
+    if "confirm_end_game" not in st.session_state:
+        st.session_state.confirm_end_game = False
+
     if not st.session_state.confirm_end_game:
         if st.button("End Game"):
             st.session_state.confirm_end_game = True
@@ -81,7 +84,7 @@ def run_game(current_game, save_games_func):
         col1, col2 = st.columns(2)
         with col1:
             if st.button("✅ Yes, End Game"):
-                # Apply stats to Player objects
+                # Apply stats to Player objects and update global players
                 for p in current_game.players:
                     stats = st.session_state.stats_state[p.name]
                     p.two_ptm += stats["2PT MAKE"]
@@ -101,6 +104,31 @@ def run_game(current_game, save_games_func):
                     p.mins += stats["MIN"]
                     p.games += 1
 
+                    # Update the global player object
+                    for global_p in st.session_state.players:
+                        if global_p.name == p.name:
+                            global_p.two_ptm = p.two_ptm
+                            global_p.two_pta = p.two_pta
+                            global_p.three_ptm = p.three_ptm
+                            global_p.three_pta = p.three_pta
+                            global_p.ftm = p.ftm
+                            global_p.fta = p.fta
+                            global_p.oreb = p.oreb
+                            global_p.dreb = p.dreb
+                            global_p.assists = p.assists
+                            global_p.turnovers = p.turnovers
+                            global_p.steals = p.steals
+                            global_p.blocks = p.blocks
+                            global_p.plus_minus = p.plus_minus
+                            global_p.pf = p.pf
+                            global_p.mins = p.mins
+                            global_p.games = p.games
+                            break
+
+                # Save updated players
+                save_players(st.session_state.players)
+
+                # Mark game as finished and save games
                 current_game.finished = True
                 st.session_state.games.append(current_game)
                 save_games_func(st.session_state.games)

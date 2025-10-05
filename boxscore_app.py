@@ -1,4 +1,5 @@
 import streamlit as st
+import pandas as pd
 import json
 import os
 from game_logic import run_game  # import the extracted function
@@ -164,7 +165,7 @@ if "confirm_end_game" not in st.session_state:
 # Sidebar navigation
 # -------------------
 st.sidebar.title("Navigation")
-page = st.sidebar.radio("Go to", ["Add Game", "Player Stats"])
+page = st.sidebar.radio("Go to", ["Add Game", "Player Stats", "Box Scores"])
 
 # -------------------
 # Page 1: Add Game
@@ -251,7 +252,7 @@ if page == "Add Game":
                         st.rerun()
         else:
             # Call the extracted in-game logic
-            run_game(st.session_state.current_game, save_games)
+            run_game(st.session_state.current_game, save_games, save_players)
 
     # Display all games
     st.markdown("### All Games:")
@@ -341,3 +342,46 @@ elif page == "Player Stats":
 
     else:
         st.info("No players yet. Add some on the 'Add Game' page.")
+
+    # -------------------
+    # Page 3: Box Scores
+    # -------------------
+elif page == "Box Scores":
+    st.title("Box Scores")
+
+    if st.session_state.games:
+        for g in st.session_state.games:
+            if not g.finished:
+                continue  # only show finished games
+            st.markdown(f"### 🏀 {g.name} (ID: {g.game_id})")
+
+            # Prepare box score table
+            box_data = []
+            for p in g.players:  # p is a Player object
+                pts = (p.two_ptm * 2) + (p.three_ptm * 3) + p.ftm
+                row = {
+                    "PLAYER": p.name,
+                    "GAMES": p.games,
+                    "MIN": p.mins,
+                    "PTS": pts,
+                    "AST": p.assists,
+                    "REB": p.oreb + p.dreb,
+                    "OREB": p.oreb,
+                    "DREB": p.dreb,
+                    "TO": p.turnovers,
+                    "STL": p.steals,
+                    "BLK": p.blocks,
+                    "2PT": f"{p.two_ptm}-{p.two_pta}",
+                    "3PT": f"{p.three_ptm}-{p.three_pta}",
+                    "FT": f"{p.ftm}-{p.fta}",
+                    "+/-": p.plus_minus,
+                    "PF": p.pf
+                }
+                box_data.append(row)
+
+            df_box = pd.DataFrame(box_data)
+            st.dataframe(df_box, use_container_width=True)
+
+    else:
+        st.info("No finished games yet.")
+
