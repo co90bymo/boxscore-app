@@ -7,7 +7,7 @@ from game_logic import run_game  # import the extracted function
 # -------------------
 # Configuration
 # -------------------
-IS_ADMIN = True  # Set True for admin
+IS_ADMIN = False  # Set True for admin
 PLAYER_FILE = "players.json"
 GAME_FILE = "games.json"
 
@@ -276,6 +276,15 @@ elif page == "Player Stats":
 
     view_mode = st.radio("Display Mode", ["Total", "Per Game"], horizontal=True)
 
+    def fmt(val):
+        """Formats numbers cleanly: removes .0 if present."""
+        if isinstance(val, (int, float)):
+            if val == int(val):
+                return int(val)
+            else:
+                return round(val, 1)
+        return val
+
     if st.session_state.players:
         player_data = []
 
@@ -304,41 +313,37 @@ elif page == "Player Stats":
             fg_pct = (fg_makes / fg_attempts * 100) if fg_attempts > 0 else 0
             ft_pct = (ftm / fta * 100) if fta > 0 else 0
 
-            # Format string without %
-            if view_mode == "Total":
-                two_pt_str = f"{int(two_ptm)}-{int(two_pta)}"
-                three_pt_str = f"{int(three_ptm)}-{int(three_pta)}"
-                ft_str = f"{int(ftm)}-{int(fta)}"
-            else:
-                two_pt_str = f"{two_ptm:.1f}-{two_pta:.1f}"
-                three_pt_str = f"{three_ptm:.1f}-{three_pta:.1f}"
-                ft_str = f"{ftm:.1f}-{fta:.1f}"
+            # Format strings (remove %)
+            two_pt_str = f"{fmt(two_ptm)}-{fmt(two_pta)}"
+            three_pt_str = f"{fmt(three_ptm)}-{fmt(three_pta)}"
+            ft_str = f"{fmt(ftm)}-{fmt(fta)}"
+            fg_str = f"{fmt(fg_makes)}-{fmt(fg_attempts)}"
 
             pts = (two_ptm * 2) + (three_ptm * 3) + ftm
             reb = d.get("OREB", 0) + d.get("DREB", 0)
 
             ordered_d = {
                 "PLAYER": d.get("PLAYER", ""),
-                "GAMES": 1 if view_mode == "Per Game" else d.get("GAMES", 0),
-                "MIN": int(d["MIN"]) if view_mode == "Total" else round(d["MIN"], 1),
-                "PTS": int(pts) if view_mode == "Total" else round(pts, 1),
-                "AST": int(d["AST"]) if view_mode == "Total" else round(d["AST"], 1),
-                "REB": int(reb) if view_mode == "Total" else round(reb, 1),
-                "OREB": int(d["OREB"]) if view_mode == "Total" else round(d["OREB"], 1),
-                "DREB": int(d["DREB"]) if view_mode == "Total" else round(d["DREB"], 1),
-                "TO": int(d["TO"]) if view_mode == "Total" else round(d["TO"], 1),
-                "STL": int(d["STL"]) if view_mode == "Total" else round(d["STL"], 1),
-                "BLK": int(d["BLK"]) if view_mode == "Total" else round(d["BLK"], 1),
+                "GAMES": fmt(1 if view_mode == "Per Game" else d.get("GAMES", 0)),
+                "MIN": fmt(d["MIN"]),
+                "PTS": fmt(pts),
+                "AST": fmt(d["AST"]),
+                "REB": fmt(reb),
+                "OREB": fmt(d["OREB"]),
+                "DREB": fmt(d["DREB"]),
+                "TO": fmt(d["TO"]),
+                "STL": fmt(d["STL"]),
+                "BLK": fmt(d["BLK"]),
                 "2PT": two_pt_str,
-                "2FG%": int(two_pt_pct) if view_mode == "Total" else round(two_pt_pct, 1),
+                "2FG%": fmt(two_pt_pct),
                 "3PT": three_pt_str,
-                "3FG%": int(three_pt_pct) if view_mode == "Total" else round(three_pt_pct, 1),
-                "FG": f"{int(fg_makes)}-{int(fg_attempts)}" if view_mode == "Total" else f"{fg_makes:.1f}-{fg_attempts:.1f}",
-                "FG%": int(fg_pct) if view_mode == "Total" else round(fg_pct, 1),
+                "3FG%": fmt(three_pt_pct),
+                "FG": fg_str,
+                "FG%": fmt(fg_pct),
                 "FT": ft_str,
-                "FT%": int(ft_pct) if view_mode == "Total" else round(ft_pct, 1),
-                "+/-": int(d["+/-"]) if view_mode == "Total" else round(d["+/-"], 1),
-                "PF": int(d["PF"]) if view_mode == "Total" else round(d["PF"], 1),
+                "FT%": fmt(ft_pct),
+                "+/-": fmt(d["+/-"]),
+                "PF": fmt(d["PF"]),
             }
 
             player_data.append(ordered_d)
@@ -350,6 +355,7 @@ elif page == "Player Stats":
 
     else:
         st.info("No players yet. Add some on the 'Add Game' page.")
+
 
 
     # -------------------
