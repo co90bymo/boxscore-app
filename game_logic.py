@@ -14,7 +14,8 @@ def run_game(current_game, save_games_func):
                "STL", "BLK", "+/-", "PF", "MIN"]
 
     # Initialize session state for stats table
-    if "stats_state" not in st.session_state:
+    current_player_names = [p.name for p in current_game.players]
+    if "stats_state" not in st.session_state or set(st.session_state.stats_state.keys()) != set(current_player_names):
         st.session_state.stats_state = {
             p.name: {col: 0 for col in columns if col != "PLAYER"} for p in current_game.players
         }
@@ -33,28 +34,34 @@ def run_game(current_game, save_games_func):
             if cols[j].button(stat):
                 st.session_state.selected_stat = stat
 
-    # Display per-player controls if a stat is selected
-    if st.session_state.selected_stat:
+    # Display per-player + / - buttons if a stat is selected and not an input-field stat
+    if st.session_state.selected_stat and st.session_state.selected_stat not in ["+/-", "PF", "MIN"]:
         st.markdown(f"### Adjust {st.session_state.selected_stat}:")
         for p in current_game.players:
-            # For +/- , PF, and MIN: use number_input
-            if st.session_state.selected_stat in ["+/-", "PF", "MIN"]:
-                st.session_state.stats_state[p.name][st.session_state.selected_stat] = st.number_input(
-                    f"{p.name} {st.session_state.selected_stat}",
-                    min_value=0,
-                    value=st.session_state.stats_state[p.name][st.session_state.selected_stat],
-                    key=f"{p.name}_{st.session_state.selected_stat}_input"
-                )
-            else:
-                col1, col2 = st.columns([1, 1])
-                with col1:
-                    if st.button(f"{p.name} +", key=f"{p.name}_{st.session_state.selected_stat}_plus"):
-                        st.session_state.stats_state[p.name][st.session_state.selected_stat] += 1
-                with col2:
-                    if st.button(f"{p.name} -", key=f"{p.name}_{st.session_state.selected_stat}_minus"):
-                        st.session_state.stats_state[p.name][st.session_state.selected_stat] = max(
-                            0, st.session_state.stats_state[p.name][st.session_state.selected_stat] - 1
-                        )
+            col1, col2 = st.columns([1, 1])
+            with col1:
+                if st.button(f"{p.name} +", key=f"{p.name}_{st.session_state.selected_stat}_plus"):
+                    st.session_state.stats_state[p.name][st.session_state.selected_stat] += 1
+            with col2:
+                if st.button(f"{p.name} -", key=f"{p.name}_{st.session_state.selected_stat}_minus"):
+                    st.session_state.stats_state[p.name][st.session_state.selected_stat] = max(
+                        0, st.session_state.stats_state[p.name][st.session_state.selected_stat] - 1
+                    )
+
+    # Display input fields for +/- , PF, MIN
+    st.markdown("### Input values for +/- , PF, MIN:")
+    for p in current_game.players:
+        col_player, col_plus_minus, col_pf, col_min = st.columns([2,1,1,1])
+        col_player.write(f"👤 {p.name}")
+        st.session_state.stats_state[p.name]["+/-"] = col_plus_minus.number_input(
+            "+/-", value=st.session_state.stats_state[p.name]["+/-"], step=1, key=f"{p.name}_plusminus"
+        )
+        st.session_state.stats_state[p.name]["PF"] = col_pf.number_input(
+            "PF", value=st.session_state.stats_state[p.name]["PF"], step=1, key=f"{p.name}_pf"
+        )
+        st.session_state.stats_state[p.name]["MIN"] = col_min.number_input(
+            "MIN", value=st.session_state.stats_state[p.name]["MIN"], step=1, key=f"{p.name}_min"
+        )
 
     # Prepare data for display using the latest stats_state
     data = []
