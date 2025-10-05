@@ -278,14 +278,17 @@ elif page == "Player Stats":
 
     if st.session_state.players:
         player_data = []
+
         for p in st.session_state.players:
             d = p.to_dict()
             games = d.get("GAMES", 1) or 1
             scale = 1 if view_mode == "Total" else games
 
+            # Scale basic stats
             for key in ["MIN", "AST", "OREB", "DREB", "TO", "STL", "BLK", "PF", "+/-"]:
                 d[key] = d.get(key, 0) / scale
 
+            # Shooting stats
             two_ptm = d["2PTM"] / scale
             two_pta = d["2PTA"] / scale
             three_ptm = d["3PTM"] / scale
@@ -293,21 +296,26 @@ elif page == "Player Stats":
             ftm = d["FTM"] / scale
             fta = d["FTA"] / scale
 
+            # Percentages
             two_pt_pct = (two_ptm / two_pta * 100) if two_pta > 0 else 0
             three_pt_pct = (three_ptm / three_pta * 100) if three_pta > 0 else 0
+            fg_makes = two_ptm + three_ptm
+            fg_attempts = two_pta + three_pta
+            fg_pct = (fg_makes / fg_attempts * 100) if fg_attempts > 0 else 0
             ft_pct = (ftm / fta * 100) if fta > 0 else 0
 
+            # Format string without %
             if view_mode == "Total":
-                d["2PT"] = f'{int(two_ptm)}-{int(two_pta)} ({two_pt_pct:.0f}%)'
-                d["3PT"] = f'{int(three_ptm)}-{int(three_pta)} ({three_pt_pct:.0f}%)'
-                d["FT"] = f'{int(ftm)}-{int(fta)} ({ft_pct:.0f}%)'
+                two_pt_str = f"{int(two_ptm)}-{int(two_pta)}"
+                three_pt_str = f"{int(three_ptm)}-{int(three_pta)}"
+                ft_str = f"{int(ftm)}-{int(fta)}"
             else:
-                d["2PT"] = f'{two_ptm:.1f}-{two_pta:.1f} ({two_pt_pct:.0f}%)'
-                d["3PT"] = f'{three_ptm:.1f}-{three_pta:.1f} ({three_pt_pct:.0f}%)'
-                d["FT"] = f'{ftm:.1f}-{fta:.1f} ({ft_pct:.0f}%)'
+                two_pt_str = f"{two_ptm:.1f}-{two_pta:.1f}"
+                three_pt_str = f"{three_ptm:.1f}-{three_pta:.1f}"
+                ft_str = f"{ftm:.1f}-{fta:.1f}"
 
             pts = (two_ptm * 2) + (three_ptm * 3) + ftm
-            d["REB"] = d.get("OREB", 0) + d.get("DREB", 0)
+            reb = d.get("OREB", 0) + d.get("DREB", 0)
 
             ordered_d = {
                 "PLAYER": d.get("PLAYER", ""),
@@ -315,15 +323,20 @@ elif page == "Player Stats":
                 "MIN": int(d["MIN"]) if view_mode == "Total" else round(d["MIN"], 1),
                 "PTS": int(pts) if view_mode == "Total" else round(pts, 1),
                 "AST": int(d["AST"]) if view_mode == "Total" else round(d["AST"], 1),
-                "REB": int(d["REB"]) if view_mode == "Total" else round(d["REB"], 1),
+                "REB": int(reb) if view_mode == "Total" else round(reb, 1),
                 "OREB": int(d["OREB"]) if view_mode == "Total" else round(d["OREB"], 1),
                 "DREB": int(d["DREB"]) if view_mode == "Total" else round(d["DREB"], 1),
                 "TO": int(d["TO"]) if view_mode == "Total" else round(d["TO"], 1),
                 "STL": int(d["STL"]) if view_mode == "Total" else round(d["STL"], 1),
                 "BLK": int(d["BLK"]) if view_mode == "Total" else round(d["BLK"], 1),
-                "2PT": d["2PT"],
-                "3PT": d["3PT"],
-                "FT": d["FT"],
+                "2PT": two_pt_str,
+                "2FG%": int(two_pt_pct) if view_mode == "Total" else round(two_pt_pct, 1),
+                "3PT": three_pt_str,
+                "3FG%": int(three_pt_pct) if view_mode == "Total" else round(three_pt_pct, 1),
+                "FG": f"{int(fg_makes)}-{int(fg_attempts)}" if view_mode == "Total" else f"{fg_makes:.1f}-{fg_attempts:.1f}",
+                "FG%": int(fg_pct) if view_mode == "Total" else round(fg_pct, 1),
+                "FT": ft_str,
+                "FT%": int(ft_pct) if view_mode == "Total" else round(ft_pct, 1),
                 "+/-": int(d["+/-"]) if view_mode == "Total" else round(d["+/-"], 1),
                 "PF": int(d["PF"]) if view_mode == "Total" else round(d["PF"], 1),
             }
@@ -332,16 +345,12 @@ elif page == "Player Stats":
 
         st.dataframe(
             player_data,
-            use_container_width=True,
-            column_config={
-                "2PT": st.column_config.TextColumn("2PT", width=85),
-                "3PT": st.column_config.TextColumn("3PT", width=85),
-                "FT": st.column_config.TextColumn("FT", width=90),
-            }
+            use_container_width=True
         )
 
     else:
         st.info("No players yet. Add some on the 'Add Game' page.")
+
 
     # -------------------
     # Page 3: Box Scores
