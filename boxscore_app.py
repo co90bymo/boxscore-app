@@ -7,7 +7,7 @@ from game_logic import run_game  # import the extracted function
 # -------------------
 # Configuration
 # -------------------
-IS_ADMIN = False  # Set True for admin
+IS_ADMIN = True  # Set True for admin
 PLAYER_FILE = "players.json"
 GAME_FILE = "games.json"
 
@@ -143,6 +143,35 @@ def save_games(games):
     with open(GAME_FILE, "w") as f:
         json.dump([g.to_dict() for g in games], f, indent=2)
 
+def get_player_total_stat(player_name, stat):
+    """
+    Returns the aggregated value of a specific stat for a given player across all games.
+    Automatically loads GAME_FILE if it's a path string.
+    """
+    global GAME_FILE
+
+    # Load the JSON if GAME_FILE is a string path
+    if isinstance(GAME_FILE, str):
+        with open(GAME_FILE, "r", encoding="utf-8") as f:
+            GAME_FILE = json.load(f)
+
+    total = 0
+
+    for game in GAME_FILE:
+        if not isinstance(game, dict):
+            continue  # skip anything malformed
+
+        if not game.get("finished", True):
+            continue
+
+        for p in game.get("players", []):
+            if p.get("PLAYER") == player_name:
+                total += p.get(stat, 0)
+
+    return total
+
+
+
 # -------------------
 # Streamlit setup
 # -------------------
@@ -271,6 +300,8 @@ if page == "Add Game":
 # -------------------
 # Page 2: Player Stats
 # -------------------
+
+
 elif page == "Player Stats":
     st.title("Player Stats")
 
@@ -290,7 +321,7 @@ elif page == "Player Stats":
 
         for p in st.session_state.players:
             d = p.to_dict()
-            games = d.get("GAMES", 1) or 1
+            games =  get_player_total_stat(player_name=p.name, stat="GAMES")
             scale = 1 if view_mode == "Total" else games
 
             # Scale basic stats
@@ -298,12 +329,12 @@ elif page == "Player Stats":
                 d[key] = d.get(key, 0) / scale
 
             # Shooting stats
-            two_ptm = d["2PTM"] / scale
-            two_pta = d["2PTA"] / scale
-            three_ptm = d["3PTM"] / scale
-            three_pta = d["3PTA"] / scale
-            ftm = d["FTM"] / scale
-            fta = d["FTA"] / scale
+            two_ptm = get_player_total_stat(player_name=p.name, stat="2PTM") / scale
+            two_pta = get_player_total_stat(player_name=p.name, stat="2PTA") / scale
+            three_ptm = get_player_total_stat(player_name=p.name, stat="3PTM") / scale
+            three_pta = get_player_total_stat(player_name=p.name, stat="3PTA") / scale
+            ftm = get_player_total_stat(player_name=p.name, stat="FTM") / scale
+            fta = get_player_total_stat(player_name=p.name, stat="FTA") / scale
 
             # Percentages
             two_pt_pct = (two_ptm / two_pta * 100) if two_pta > 0 else 0
@@ -320,20 +351,23 @@ elif page == "Player Stats":
             fg_str = f"{fmt(fg_makes)}-{fmt(fg_attempts)}"
 
             pts = (two_ptm * 2) + (three_ptm * 3) + ftm
-            reb = d.get("OREB", 0) + d.get("DREB", 0)
+
+            oreb = get_player_total_stat(player_name=p.name, stat="OREB") / scale
+            dreb = get_player_total_stat(player_name=p.name, stat="DREB") / scale
+            reb = oreb + dreb
 
             ordered_d = {
                 "PLAYER": d.get("PLAYER", ""),
-                "GAMES": fmt(1 if view_mode == "Per Game" else d.get("GAMES", 0)),
-                "MIN": fmt(d["MIN"]),
+                "GAMES": fmt(1 if view_mode == "Per Game" else get_player_total_stat(player_name=p.name, stat="GAMES"),),
+                "MIN": fmt(get_player_total_stat(player_name=p.name, stat="MIN") / scale),
                 "PTS": fmt(pts),
-                "AST": fmt(d["AST"]),
+                "AST": fmt(get_player_total_stat(player_name=p.name, stat="AST") / scale),
                 "REB": fmt(reb),
-                "OREB": fmt(d["OREB"]),
-                "DREB": fmt(d["DREB"]),
-                "TO": fmt(d["TO"]),
-                "STL": fmt(d["STL"]),
-                "BLK": fmt(d["BLK"]),
+                "OREB": fmt(oreb),
+                "DREB": fmt(dreb),
+                "TO": fmt(get_player_total_stat(player_name=p.name, stat="TO") / scale),
+                "STL": fmt(get_player_total_stat(player_name=p.name, stat="STL") / scale),
+                "BLK": fmt(get_player_total_stat(player_name=p.name, stat="BLK") / scale),
                 "2PT": two_pt_str,
                 "2FG%": fmt(two_pt_pct),
                 "3PT": three_pt_str,
@@ -342,8 +376,8 @@ elif page == "Player Stats":
                 "FG%": fmt(fg_pct),
                 "FT": ft_str,
                 "FT%": fmt(ft_pct),
-                "+/-": fmt(d["+/-"]),
-                "PF": fmt(d["PF"]),
+                "+/-": fmt(get_player_total_stat(player_name=p.name, stat="+/-") / scale),
+                "PF": fmt(get_player_total_stat(player_name=p.name, stat="PF") / scale),
             }
 
             player_data.append(ordered_d)
@@ -356,6 +390,7 @@ elif page == "Player Stats":
     else:
         st.info("No players yet. Add some on the 'Add Game' page.")
 
+    
 
 
     # -------------------
