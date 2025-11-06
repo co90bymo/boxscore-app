@@ -7,7 +7,7 @@ from game_logic import run_game  # import the extracted function
 # -------------------
 # Configuration
 # -------------------
-IS_ADMIN = True  # Set True for admin
+IS_ADMIN = False  # Set True for admin
 PLAYER_FILE = "players.json"
 GAME_FILE = "games.json"
 
