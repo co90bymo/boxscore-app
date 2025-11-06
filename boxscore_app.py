@@ -405,9 +405,9 @@ elif page == "Box Scores":
                 continue  # only show finished games
             st.markdown(f"### 🏀 {g.name} (ID: {g.game_id})")
 
-            # Prepare box score table
+            # Build box-score rows using per-game player objects stored in game.players
             box_data = []
-            for p in g.players:  # p is a Player object
+            for p in g.players:
                 pts = (p.two_ptm * 2) + (p.three_ptm * 3) + p.ftm
                 row = {
                     "PLAYER": p.name,
@@ -431,7 +431,5 @@ elif page == "Box Scores":
 
             df_box = pd.DataFrame(box_data)
             st.dataframe(df_box, use_container_width=True)
-
     else:
         st.info("No finished games yet.")
-
