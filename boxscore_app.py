@@ -3,6 +3,7 @@ import pandas as pd
 import json
 import os
 from game_logic import run_game  # import the extracted function
+from time_arithmetic import time_str_to_seconds, seconds_to_time_str, add_times
 
 # -------------------
 # Configuration
@@ -15,11 +16,11 @@ GAME_FILE = "games.json"
 # Player class
 # -------------------
 class Player:
-    def __init__(self, name: str, games=0, mins=0, assists=0, dreb=0, oreb=0, turnovers=0, steals=0, blocks=0,
+    def __init__(self, name: str, games=0, min=0, assists=0, dreb=0, oreb=0, turnovers=0, steals=0, blocks=0,
                  two_pta=0, two_ptm=0, three_pta=0, three_ptm=0, fta=0, ftm=0, plus_minus=0, pf=0):
         self.games = games
         self.name = name
-        self.mins = mins
+        self.min = min
         self.assists = assists
         self.dreb = dreb
         self.oreb = oreb
@@ -39,7 +40,7 @@ class Player:
         return {
             "PLAYER": self.name,
             "GAMES": self.games,
-            "MIN": self.mins,
+            "MIN": self.min,
             "AST": self.assists,
             "OREB": self.dreb,
             "DREB": self.oreb,
@@ -64,7 +65,7 @@ class Player:
             return cls(
                 name=data.get("PLAYER", ""),
                 games=data.get("GAMES", 0),
-                mins=data.get("MIN", 0),
+                min=data.get("MIN", 0),
                 assists=data.get("AST", 0),
                 dreb=data.get("DREB", 0),
                 oreb=data.get("OREB", 0),
@@ -143,6 +144,15 @@ def save_games(games):
     with open(GAME_FILE, "w") as f:
         json.dump([g.to_dict() for g in games], f, indent=2)
 
+def fmt(val):
+        """Formats numbers cleanly."""
+        if isinstance(val, (int, float)):
+            if val == int(val):
+                return int(val)
+            else:
+                return round(val, 1)
+        return val
+
 def get_player_total_stat(player_name, stat):
     """
     Returns the aggregated value of a specific stat for a given player across all games.
@@ -166,7 +176,18 @@ def get_player_total_stat(player_name, stat):
 
         for p in game.get("players", []):
             if p.get("PLAYER") == player_name:
-                total += p.get(stat, 0)
+                value = p.get(stat, 0)
+                
+                # Special handling for 'MIN' using time helper
+                if stat == "MIN":
+                    if isinstance(value, str):
+                        value = time_str_to_seconds(value)  # convert "MM:SS" to seconds
+                    elif isinstance(value, (int, float)):
+                        value = value * 60  # convert minutes to seconds
+
+                total += value
+            
+        
 
     return total
 
@@ -300,41 +321,48 @@ if page == "Add Game":
 # -------------------
 # Page 2: Player Stats
 # -------------------
-
-
 elif page == "Player Stats":
     st.title("Player Stats")
 
     view_mode = st.radio("Display Mode", ["Total", "Per Game"], horizontal=True)
 
-    def fmt(val):
-        """Formats numbers cleanly: removes .0 if present."""
-        if isinstance(val, (int, float)):
-            if val == int(val):
-                return int(val)
-            else:
-                return round(val, 1)
-        return val
-
     if st.session_state.players:
         player_data = []
 
+        # Determine total games played (only finished games count)
+        total_games_played = sum(1 for g in st.session_state.games if g.finished)
+        if total_games_played == 0:
+            total_games_played = 1  # prevent division by zero
+
+        # Initialize team totals
+        team_totals = {
+            "MIN": 0, "PTS": 0, "AST": 0, "REB": 0, "OREB": 0, "DREB": 0,
+            "TO": 0, "STL": 0, "BLK": 0, "2PTM": 0, "2PTA": 0,
+            "3PTM": 0, "3PTA": 0, "FTM": 0, "FTA": 0, "+/-": 0, "PF": 0
+        }
+
         for p in st.session_state.players:
             d = p.to_dict()
-            games =  get_player_total_stat(player_name=p.name, stat="GAMES")
+            games = get_player_total_stat(p.name, "GAMES")
+            if games == 0:
+                continue
+
+            # Determine scale for this player
             scale = 1 if view_mode == "Total" else games
 
-            # Scale basic stats
-            for key in ["MIN", "AST", "OREB", "DREB", "TO", "STL", "BLK", "PF", "+/-"]:
-                d[key] = d.get(key, 0) / scale
-
             # Shooting stats
-            two_ptm = get_player_total_stat(player_name=p.name, stat="2PTM") / scale
-            two_pta = get_player_total_stat(player_name=p.name, stat="2PTA") / scale
-            three_ptm = get_player_total_stat(player_name=p.name, stat="3PTM") / scale
-            three_pta = get_player_total_stat(player_name=p.name, stat="3PTA") / scale
-            ftm = get_player_total_stat(player_name=p.name, stat="FTM") / scale
-            fta = get_player_total_stat(player_name=p.name, stat="FTA") / scale
+            two_ptm = get_player_total_stat(p.name, "2PTM") / scale
+            two_pta = get_player_total_stat(p.name, "2PTA") / scale
+            three_ptm = get_player_total_stat(p.name, "3PTM") / scale
+            three_pta = get_player_total_stat(p.name, "3PTA") / scale
+            ftm = get_player_total_stat(p.name, "FTM") / scale
+            fta = get_player_total_stat(p.name, "FTA") / scale
+
+            # Derived stats
+            pts = (two_ptm * 2) + (three_ptm * 3) + ftm
+            oreb = get_player_total_stat(p.name, "OREB") / scale
+            dreb = get_player_total_stat(p.name, "DREB") / scale
+            reb = oreb + dreb
 
             # Percentages
             two_pt_pct = (two_ptm / two_pta * 100) if two_pta > 0 else 0
@@ -344,53 +372,121 @@ elif page == "Player Stats":
             fg_pct = (fg_makes / fg_attempts * 100) if fg_attempts > 0 else 0
             ft_pct = (ftm / fta * 100) if fta > 0 else 0
 
-            # Format strings (remove %)
-            two_pt_str = f"{fmt(two_ptm)}-{fmt(two_pta)}"
-            three_pt_str = f"{fmt(three_ptm)}-{fmt(three_pta)}"
-            ft_str = f"{fmt(ftm)}-{fmt(fta)}"
-            fg_str = f"{fmt(fg_makes)}-{fmt(fg_attempts)}"
+               # --- Handle MIN as MM:SS ---
+            min_seconds = get_player_total_stat(p.name, "MIN")
+            if view_mode == "Per Game":
+                min_seconds = round(min_seconds / scale)
+            min_display = seconds_to_time_str(int(min_seconds))
 
-            pts = (two_ptm * 2) + (three_ptm * 3) + ftm
-
-            oreb = get_player_total_stat(player_name=p.name, stat="OREB") / scale
-            dreb = get_player_total_stat(player_name=p.name, stat="DREB") / scale
-            reb = oreb + dreb
-
+            # Player row
             ordered_d = {
                 "PLAYER": d.get("PLAYER", ""),
-                "GAMES": fmt(1 if view_mode == "Per Game" else get_player_total_stat(player_name=p.name, stat="GAMES"),),
-                "MIN": fmt(get_player_total_stat(player_name=p.name, stat="MIN") / scale),
+                "GAMES": fmt(1 if view_mode == "Per Game" else games),
+                "MIN": min_display,
                 "PTS": fmt(pts),
-                "AST": fmt(get_player_total_stat(player_name=p.name, stat="AST") / scale),
+                "AST": fmt(get_player_total_stat(p.name, "AST") / scale),
                 "REB": fmt(reb),
                 "OREB": fmt(oreb),
                 "DREB": fmt(dreb),
-                "TO": fmt(get_player_total_stat(player_name=p.name, stat="TO") / scale),
-                "STL": fmt(get_player_total_stat(player_name=p.name, stat="STL") / scale),
-                "BLK": fmt(get_player_total_stat(player_name=p.name, stat="BLK") / scale),
-                "2PT": two_pt_str,
-                "2FG%": fmt(two_pt_pct),
-                "3PT": three_pt_str,
-                "3FG%": fmt(three_pt_pct),
-                "FG": fg_str,
+                "TO": fmt(get_player_total_stat(p.name, "TO") / scale),
+                "STL": fmt(get_player_total_stat(p.name, "STL") / scale),
+                "BLK": fmt(get_player_total_stat(p.name, "BLK") / scale),
+                "FG": f"{fmt(fg_makes)}-{fmt(fg_attempts)}",
                 "FG%": fmt(fg_pct),
-                "FT": ft_str,
+                "2PT": f"{fmt(two_ptm)}-{fmt(two_pta)}",
+                "2FG%": fmt(two_pt_pct),
+                "3PT": f"{fmt(three_ptm)}-{fmt(three_pta)}",
+                "3FG%": fmt(three_pt_pct),
+                "FT": f"{fmt(ftm)}-{fmt(fta)}",
                 "FT%": fmt(ft_pct),
-                "+/-": fmt(get_player_total_stat(player_name=p.name, stat="+/-") / scale),
-                "PF": fmt(get_player_total_stat(player_name=p.name, stat="PF") / scale),
+                "+/-": fmt(get_player_total_stat(p.name, "+/-") / scale),
+                "PF": fmt(get_player_total_stat(p.name, "PF") / scale),
             }
 
             player_data.append(ordered_d)
 
-        st.dataframe(
-            player_data,
-            use_container_width=True
-        )
+            scale = 1 if view_mode == "Total" else total_games_played
+
+            # --- Handle MIN as MM:SS ---
+            min_seconds = get_player_total_stat(p.name, "MIN")
+            if view_mode == "Per Game":
+                min_seconds = round(min_seconds / total_games_played)
+                print("scale:")
+                print(scale)
+
+            # Accumulate team totals (raw sums)
+            team_totals["MIN"] += min_seconds
+            team_totals["AST"] += get_player_total_stat(p.name, "AST")
+            team_totals["OREB"] += get_player_total_stat(p.name, "OREB")
+            team_totals["DREB"] += get_player_total_stat(p.name, "DREB")
+            team_totals["TO"] += get_player_total_stat(p.name, "TO") 
+            team_totals["STL"] += get_player_total_stat(p.name, "STL") 
+            team_totals["BLK"] += get_player_total_stat(p.name, "BLK")
+            team_totals["2PTM"] += get_player_total_stat(p.name, "2PTM")
+            team_totals["2PTA"] += get_player_total_stat(p.name, "2PTA")
+            team_totals["3PTM"] += get_player_total_stat(p.name, "3PTM")
+            team_totals["3PTA"] += get_player_total_stat(p.name, "3PTA")
+            team_totals["FTM"] += get_player_total_stat(p.name, "FTM")
+            team_totals["FTA"] += get_player_total_stat(p.name, "FTA")
+            team_totals["+/-"] += get_player_total_stat(p.name, "+/-") 
+            team_totals["PF"] += get_player_total_stat(p.name, "PF")
+
+        scale = 1 if view_mode == "Total" else total_games_played
+
+        # --- Team totals row ---
+        # Shooting stats
+        two_ptm = team_totals["2PTM"] / scale
+        two_pta = team_totals["2PTA"] / scale
+        three_ptm = team_totals["3PTM"] / scale
+        three_pta = team_totals["3PTA"] / scale
+        ftm = team_totals["FTM"] / scale
+        fta = team_totals["FTA"] / scale
+
+        # Derived stats
+        pts = (two_ptm * 2) + (three_ptm * 3) + ftm
+        oreb = team_totals["OREB"] / scale
+        dreb = team_totals["DREB"] / scale
+        reb = oreb + dreb
+
+        # Percentages
+        two_pt_pct = (two_ptm / two_pta * 100) if two_pta > 0 else 0
+        three_pt_pct = (three_ptm / three_pta * 100) if three_pta > 0 else 0
+        fg_makes = two_ptm + three_ptm
+        fg_attempts = two_pta + three_pta
+        fg_pct = (fg_makes / fg_attempts * 100) if fg_attempts > 0 else 0
+        ft_pct = (ftm / fta * 100) if fta > 0 else 0
+
+        print((team_totals["MIN"]))
+        team_row = {
+            "PLAYER": "👥 TEAM TOTAL",
+            "GAMES": fmt(1 if view_mode == "Per Game" else total_games_played),
+            "MIN": fmt(seconds_to_time_str(team_totals["MIN"])),
+            "PTS": pts,
+            "AST": fmt(team_totals["AST"] / scale),
+            "REB": reb,
+            "OREB": oreb,
+            "DREB": dreb,
+            "TO": fmt(team_totals["TO"] / scale),
+            "STL": fmt(team_totals["STL"] / scale),
+            "BLK": fmt(team_totals["BLK"] / scale),
+            "FG": f"{fmt(fg_makes)}-{fmt(fg_attempts)}",
+            "FG%": fmt(fg_pct),
+            "2PT": f"{fmt(two_ptm)}-{fmt(two_pta)}",
+            "2FG%": fmt(two_pt_pct),
+            "3PT": f"{fmt(three_ptm)}-{fmt(three_pta)}",
+            "3FG%": fmt(three_pt_pct),
+            "FT": f"{fmt(ftm)}-{fmt(fta)}",
+            "FT%": fmt(ft_pct),
+            "+/-": fmt(team_totals["+/-"] / scale),
+            "PF": fmt(team_totals["PF"] / scale),
+        }
+
+        player_data.append(team_row)
+        st.dataframe(player_data, use_container_width=True)
 
     else:
         st.info("No players yet. Add some on the 'Add Game' page.")
 
-    
 # -------------------
 # Page 3: Box Scores
 # -------------------
@@ -420,7 +516,7 @@ elif page == "Box Scores":
 
                 row = {
                     "PLAYER": p.name,
-                    "MIN": p.mins,
+                    "MIN": p.min,
                     "PTS": pts,
                     "AST": p.assists,
                     "REB": p.oreb + p.dreb,
@@ -429,12 +525,12 @@ elif page == "Box Scores":
                     "TO": p.turnovers,
                     "STL": p.steals,
                     "BLK": p.blocks,
+                    "FG": f"{fg_makes}-{fg_attempts}",
+                    "FG%": round(fg_pct, 1),
                     "2PT": f"{p.two_ptm}-{p.two_pta}",
                     "2FG%": round(two_fg_pct, 1),
                     "3PT": f"{p.three_ptm}-{p.three_pta}",
                     "3FG%": round(three_fg_pct, 1),
-                    "FG": f"{fg_makes}-{fg_attempts}",
-                    "FG%": round(fg_pct, 1),
                     "FT": f"{p.ftm}-{p.fta}",
                     "FT%": round(ft_pct, 1),
                     "+/-": p.plus_minus,
@@ -442,7 +538,60 @@ elif page == "Box Scores":
                 }
                 box_data.append(row)
 
-            df_box = pd.DataFrame(box_data)
+            # --- Calculate team totals ---
+            total_seconds = sum(time_str_to_seconds(p.min) for p in g.players)
+            total_min = seconds_to_time_str(total_seconds)
+            total_pts = sum((p.two_ptm * 2) + (p.three_ptm * 3) + p.ftm for p in g.players)
+            total_ast = sum(p.assists for p in g.players)
+            total_reb = sum(p.oreb + p.dreb for p in g.players)
+            total_oreb = sum(p.oreb for p in g.players)
+            total_dreb = sum(p.dreb for p in g.players)
+            total_to = sum(p.turnovers for p in g.players)
+            total_stl = sum(p.steals for p in g.players)
+            total_blk = sum(p.blocks for p in g.players)
+            total_pf = sum(p.pf for p in g.players)
+            total_plus_minus = sum(p.plus_minus for p in g.players)
+
+            total_two_ptm = sum(p.two_ptm for p in g.players)
+            total_two_pta = sum(p.two_pta for p in g.players)
+            total_three_ptm = sum(p.three_ptm for p in g.players)
+            total_three_pta = sum(p.three_pta for p in g.players)
+            total_ftm = sum(p.ftm for p in g.players)
+            total_fta = sum(p.fta for p in g.players)
+            total_fg_makes = total_two_ptm + total_three_ptm
+            total_fg_attempts = total_two_pta + total_three_pta
+
+            team_fg_pct = (total_fg_makes / total_fg_attempts * 100) if total_fg_attempts > 0 else 0
+            team_2fg_pct = (total_two_ptm / total_two_pta * 100) if total_two_pta > 0 else 0
+            team_3fg_pct = (total_three_ptm / total_three_pta * 100) if total_three_pta > 0 else 0
+            team_ft_pct = (total_ftm / total_fta * 100) if total_fta > 0 else 0
+
+            team_row = {
+                "PLAYER": "👥 TEAM TOTAL",
+                "MIN": total_min,
+                "PTS": total_pts,
+                "AST": total_ast,
+                "REB": total_reb,
+                "OREB": total_oreb,
+                "DREB": total_dreb,
+                "TO": total_to,
+                "STL": total_stl,
+                "BLK": total_blk,
+                "FG": f"{total_fg_makes}-{total_fg_attempts}",
+                "FG%": fmt(team_fg_pct),
+                "2PT": f"{total_two_ptm}-{total_two_pta}",
+                "2FG%": fmt(team_2fg_pct),
+                "3PT": f"{total_three_ptm}-{total_three_pta}",
+                "3FG%": fmt(team_3fg_pct),
+                "FT": f"{total_ftm}-{total_fta}",
+                "FT%": fmt(team_ft_pct),
+                "+/-": total_plus_minus,
+                "PF": total_pf
+            }
+
+            box_data.append(team_row) 
+            # Display DataFrame 
+            df_box = pd.DataFrame(box_data) 
             st.dataframe(df_box, use_container_width=True)
     else:
         st.info("No finished games yet.")

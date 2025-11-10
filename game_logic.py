@@ -41,7 +41,7 @@ def run_game(current_game, save_games_func, save_players):
                     st.session_state.stats_state[p.name][st.session_state.selected_stat] += 1
             with col2:
                 if st.button(f"{p.name} -", key=f"{p.name}_{st.session_state.selected_stat}_minus"):
-                    st.session_state.stats_state[p.name][st.selected_stat] = max(0, st.session_state.stats_state[p.name][st.selected_stat]-1)
+                    st.session_state.stats_state[p.name][st.session_state.selected_stat] -= 1
 
     # Input fields for +/- , PF, MIN
     st.markdown("### Input values for +/- , PF, MIN:")
@@ -76,7 +76,7 @@ def run_game(current_game, save_games_func, save_players):
                 # Save game stats (per game only)
                 for p in current_game.players:
                     stats = st.session_state.stats_state[p.name]
-                    p.mins = stats["MIN"]
+                    p.min = stats["MIN"]
                     p.assists = stats["AST"]
                     p.oreb = stats["OREB"]
                     p.dreb = stats["DREB"]

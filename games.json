@@ -6,7 +6,7 @@
       {
         "PLAYER": "Manuel Gr\u00fcn",
         "GAMES": 1,
-        "MIN": 32,
+        "MIN": "32:00",
         "AST": 1,
         "OREB": 0,
         "DREB": 3,
@@ -25,7 +25,7 @@
       {
         "PLAYER": "Player (Louis)",
         "GAMES": 1,
-        "MIN": 6,
+        "MIN": "6:00",
         "AST": 0,
         "OREB": 0,
         "DREB": 0,
@@ -44,7 +44,7 @@
       {
         "PLAYER": "Christian Ortu",
         "GAMES": 1,
-        "MIN": 20,
+        "MIN": "20:00",
         "AST": 0,
         "OREB": 1,
         "DREB": 1,
@@ -63,7 +63,7 @@
       {
         "PLAYER": "Stephan H\u00e4rtel",
         "GAMES": 1,
-        "MIN": 26,
+        "MIN": "26:00",
         "AST": 3,
         "OREB": 4,
         "DREB": 4,
@@ -82,7 +82,7 @@
       {
         "PLAYER": "Clemens Kraft",
         "GAMES": 1,
-        "MIN": 17,
+        "MIN": "17:00",
         "AST": 0,
         "OREB": 1,
         "DREB": 2,
@@ -101,7 +101,7 @@
       {
         "PLAYER": "Jerome Keller",
         "GAMES": 1,
-        "MIN": 27,
+        "MIN": "27:00",
         "AST": 2,
         "OREB": 6,
         "DREB": 3,
@@ -120,7 +120,7 @@
       {
         "PLAYER": "Stefan Hoppe",
         "GAMES": 1,
-        "MIN": 32,
+        "MIN": "32:00",
         "AST": 1,
         "OREB": 4,
         "DREB": 4,
@@ -139,7 +139,7 @@
       {
         "PLAYER": "Bastian Beliza",
         "GAMES": 1,
-        "MIN": 27,
+        "MIN": "27:00",
         "AST": 0,
         "OREB": 4,
         "DREB": 1,
@@ -158,7 +158,7 @@
       {
         "PLAYER": "Jonas Feike",
         "GAMES": 1,
-        "MIN": 13,
+        "MIN": "13:00",
         "AST": 1,
         "OREB": 1,
         "DREB": 5,
@@ -184,7 +184,7 @@
       {
         "PLAYER": "Christian Ortu",
         "GAMES": 1,
-        "MIN": 18,
+        "MIN": "18:00",
         "AST": 3,
         "OREB": 4,
         "DREB": 0,
@@ -203,7 +203,7 @@
       {
         "PLAYER": "Stephan H\u00e4rtel",
         "GAMES": 1,
-        "MIN": 23,
+        "MIN": "23:00",
         "AST": 0,
         "OREB": 4,
         "DREB": 2,
@@ -222,7 +222,7 @@
       {
         "PLAYER": "Jerome Keller",
         "GAMES": 1,
-        "MIN": 29,
+        "MIN": "29:00",
         "AST": 4,
         "OREB": 3,
         "DREB": 9,
@@ -241,7 +241,7 @@
       {
         "PLAYER": "Stefan Hoppe",
         "GAMES": 1,
-        "MIN": 23,
+        "MIN": "23:00",
         "AST": 2,
         "OREB": 0,
         "DREB": 4,
@@ -260,7 +260,7 @@
       {
         "PLAYER": "Bastian Beliza",
         "GAMES": 1,
-        "MIN": 29,
+        "MIN": "29:00",
         "AST": 2,
         "OREB": 0,
         "DREB": 4,
@@ -279,7 +279,7 @@
       {
         "PLAYER": "Pascal Kuba",
         "GAMES": 1,
-        "MIN": 19,
+        "MIN": "19:00",
         "AST": 1,
         "OREB": 3,
         "DREB": 3,
@@ -298,7 +298,7 @@
       {
         "PLAYER": "Paul Schneider",
         "GAMES": 1,
-        "MIN": 27,
+        "MIN": "27:00",
         "AST": 2,
         "OREB": 1,
         "DREB": 1,
@@ -317,7 +317,7 @@
       {
         "PLAYER": "Mika-Tim Drewlies",
         "GAMES": 1,
-        "MIN": 5,
+        "MIN": "5:00",
         "AST": 0,
         "OREB": 0,
         "DREB": 0,
@@ -336,7 +336,7 @@
       {
         "PLAYER": "Timo Schmidt",
         "GAMES": 1,
-        "MIN": 26,
+        "MIN": "26:00",
         "AST": 3,
         "OREB": 2,
         "DREB": 0,
@@ -362,7 +362,7 @@
       {
         "PLAYER": "Christian Ortu",
         "GAMES": 1,
-        "MIN": 15,
+        "MIN": "15:00",
         "AST": 3,
         "OREB": 3,
         "DREB": 2,
@@ -381,7 +381,7 @@
       {
         "PLAYER": "Stephan H\u00e4rtel",
         "GAMES": 1,
-        "MIN": 22,
+        "MIN": "22:00",
         "AST": 2,
         "OREB": 0,
         "DREB": 2,
@@ -400,7 +400,7 @@
       {
         "PLAYER": "Clemens Kraft",
         "GAMES": 1,
-        "MIN": 2,
+        "MIN": "2:00",
         "AST": 0,
         "OREB": 0,
         "DREB": 0,
@@ -419,7 +419,7 @@
       {
         "PLAYER": "Jerome Keller",
         "GAMES": 1,
-        "MIN": 38,
+        "MIN": "38:00",
         "AST": 2,
         "OREB": 5,
         "DREB": 14,
@@ -438,7 +438,7 @@
       {
         "PLAYER": "Bastian Beliza",
         "GAMES": 1,
-        "MIN": 28,
+        "MIN": "28:00",
         "AST": 0,
         "OREB": 1,
         "DREB": 0,
@@ -457,7 +457,7 @@
       {
         "PLAYER": "Paul Schneider",
         "GAMES": 1,
-        "MIN": 26,
+        "MIN": "26:00",
         "AST": 3,
         "OREB": 3,
         "DREB": 3,
@@ -476,7 +476,7 @@
       {
         "PLAYER": "Mika-Tim Drewlies",
         "GAMES": 1,
-        "MIN": 4,
+        "MIN": "4:00",
         "AST": 0,
         "OREB": 0,
         "DREB": 0,
@@ -495,7 +495,7 @@
       {
         "PLAYER": "Timo Schmidt",
         "GAMES": 1,
-        "MIN": 26,
+        "MIN": "26:00",
         "AST": 2,
         "OREB": 0,
         "DREB": 3,
@@ -514,7 +514,7 @@
       {
         "PLAYER": "Jan Steinhaus",
         "GAMES": 1,
-        "MIN": 26,
+        "MIN": "26:00",
         "AST": 0,
         "OREB": 1,
         "DREB": 0,
@@ -533,7 +533,7 @@
       {
         "PLAYER": "Nils Renfordt",
         "GAMES": 1,
-        "MIN": 12,
+        "MIN": "12:00",
         "AST": 1,
         "OREB": 0,
         "DREB": 1,
@@ -559,7 +559,7 @@
       {
         "PLAYER": "Player (Louis)",
         "GAMES": 1,
-        "MIN": 0,
+        "MIN": "18:46",
         "AST": 0,
         "OREB": 1,
         "DREB": 1,
@@ -572,13 +572,13 @@
         "3PTM": 1,
         "FTA": 0,
         "FTM": 0,
-        "+/-": 0,
+        "+/-": -13,
         "PF": 0
       },
       {
         "PLAYER": "Stephan H\u00e4rtel",
         "GAMES": 1,
-        "MIN": 0,
+        "MIN": "25:49",
         "AST": 0,
         "OREB": 3,
         "DREB": 1,
@@ -591,13 +591,13 @@
         "3PTM": 0,
         "FTA": 4,
         "FTM": 3,
-        "+/-": 0,
-        "PF": 0
+        "+/-": -23,
+        "PF": 2
       },
       {
         "PLAYER": "Clemens Kraft",
         "GAMES": 1,
-        "MIN": 0,
+        "MIN": "3:28",
         "AST": 3,
         "OREB": 1,
         "DREB": 0,
@@ -610,13 +610,13 @@
         "3PTM": 0,
         "FTA": 0,
         "FTM": 0,
-        "+/-": 0,
-        "PF": 0
+        "+/-": 3,
+        "PF": 1
       },
       {
         "PLAYER": "Jerome Keller",
         "GAMES": 1,
-        "MIN": 0,
+        "MIN": "31:50",
         "AST": 5,
         "OREB": 5,
         "DREB": 2,
@@ -629,13 +629,13 @@
         "3PTM": 0,
         "FTA": 0,
         "FTM": 0,
-        "+/-": 0,
-        "PF": 0
+        "+/-": -21,
+        "PF": 3
       },
       {
         "PLAYER": "Stefan Hoppe",
         "GAMES": 1,
-        "MIN": 0,
+        "MIN": "1:58",
         "AST": 0,
         "OREB": 1,
         "DREB": 1,
@@ -648,13 +648,13 @@
         "3PTM": 0,
         "FTA": 0,
         "FTM": 0,
-        "+/-": 0,
+        "+/-": 2,
         "PF": 0
       },
       {
         "PLAYER": "Bastian Beliza",
         "GAMES": 1,
-        "MIN": 0,
+        "MIN": "22:03",
         "AST": 0,
         "OREB": 4,
         "DREB": 1,
@@ -667,13 +667,13 @@
         "3PTM": 1,
         "FTA": 2,
         "FTM": 1,
-        "+/-": 0,
-        "PF": 0
+        "+/-": -13,
+        "PF": 3
       },
       {
         "PLAYER": "Jonas Feike",
         "GAMES": 1,
-        "MIN": 0,
+        "MIN": "20:23",
         "AST": 1,
         "OREB": 5,
         "DREB": 0,
@@ -686,13 +686,13 @@
         "3PTM": 0,
         "FTA": 2,
         "FTM": 0,
-        "+/-": 0,
-        "PF": 0
+        "+/-": -14,
+        "PF": 4
       },
       {
         "PLAYER": "Paul Schneider",
         "GAMES": 1,
-        "MIN": 0,
+        "MIN": "24:54",
         "AST": 0,
         "OREB": 6,
         "DREB": 2,
@@ -705,13 +705,13 @@
         "3PTM": 0,
         "FTA": 2,
         "FTM": 2,
-        "+/-": 0,
-        "PF": 0
+        "+/-": -12,
+        "PF": 1
       },
       {
         "PLAYER": "Timo Schmidt",
         "GAMES": 1,
-        "MIN": 0,
+        "MIN": "22:17",
         "AST": 1,
         "OREB": 5,
         "DREB": 4,
@@ -724,13 +724,13 @@
         "3PTM": 0,
         "FTA": 2,
         "FTM": 0,
-        "+/-": 0,
-        "PF": 0
+        "+/-": -18,
+        "PF": 2
       },
       {
         "PLAYER": "Jan Steinhaus",
         "GAMES": 1,
-        "MIN": 0,
+        "MIN": "9:37",
         "AST": 0,
         "OREB": 1,
         "DREB": 0,
@@ -743,13 +743,13 @@
         "3PTM": 1,
         "FTA": 0,
         "FTM": 0,
-        "+/-": 0,
-        "PF": 0
+        "+/-": -27,
+        "PF": 1
       },
       {
         "PLAYER": "Nils Renfordt",
         "GAMES": 1,
-        "MIN": 0,
+        "MIN": "18:54",
         "AST": 1,
         "OREB": 4,
         "DREB": 1,
@@ -762,8 +762,8 @@
         "3PTM": 1,
         "FTA": 0,
         "FTM": 0,
-        "+/-": 0,
-        "PF": 0
+        "+/-": -4,
+        "PF": 1
       }
     ],
     "finished": true
@@ -775,7 +775,7 @@
       {
         "PLAYER": "Manuel Gr\u00fcn",
         "GAMES": 1,
-        "MIN": 0,
+        "MIN": "23:11",
         "AST": 1,
         "OREB": 1,
         "DREB": 3,
@@ -788,13 +788,13 @@
         "3PTM": 2,
         "FTA": 2,
         "FTM": 0,
-        "+/-": 0,
-        "PF": 0
+        "+/-": -24,
+        "PF": 4
       },
       {
         "PLAYER": "Christian Ortu",
         "GAMES": 1,
-        "MIN": 0,
+        "MIN": "17:57",
         "AST": 1,
         "OREB": 0,
         "DREB": 2,
@@ -807,13 +807,13 @@
         "3PTM": 0,
         "FTA": 0,
         "FTM": 0,
-        "+/-": 0,
+        "+/-": -30,
         "PF": 0
       },
       {
         "PLAYER": "Stephan H\u00e4rtel",
         "GAMES": 1,
-        "MIN": 0,
+        "MIN": "18:01",
         "AST": 1,
         "OREB": 4,
         "DREB": 2,
@@ -826,32 +826,32 @@
         "3PTM": 0,
         "FTA": 4,
         "FTM": 1,
-        "+/-": 0,
-        "PF": 0
+        "+/-": -19,
+        "PF": 1
       },
       {
         "PLAYER": "Bastian Beliza",
         "GAMES": 1,
-        "MIN": 0,
+        "MIN": "28:52",
         "AST": 2,
         "OREB": 0,
         "DREB": 4,
         "TO": 5,
         "STL": 2,
         "BLK": 0,
-        "2PTA": 9,
-        "2PTM": 6,
+        "2PTA": 8,
+        "2PTM": 5,
         "3PTA": 4,
         "3PTM": 0,
         "FTA": 6,
         "FTM": 4,
-        "+/-": 0,
-        "PF": 0
+        "+/-": -11,
+        "PF": 2
       },
       {
         "PLAYER": "Jonas Feike",
         "GAMES": 1,
-        "MIN": 0,
+        "MIN": "20:09",
         "AST": 2,
         "OREB": 6,
         "DREB": 4,
@@ -864,13 +864,13 @@
         "3PTM": 0,
         "FTA": 2,
         "FTM": 0,
-        "+/-": 0,
-        "PF": 0
+        "+/-": -11,
+        "PF": 2
       },
       {
         "PLAYER": "Pascal Kuba",
         "GAMES": 1,
-        "MIN": 0,
+        "MIN": "23:57",
         "AST": 2,
         "OREB": 3,
         "DREB": 6,
@@ -883,13 +883,13 @@
         "3PTM": 0,
         "FTA": 2,
         "FTM": 0,
-        "+/-": 0,
-        "PF": 0
+        "+/-": 6,
+        "PF": 2
       },
       {
         "PLAYER": "Mika-Tim Drewlies",
         "GAMES": 1,
-        "MIN": 0,
+        "MIN": "4:58",
         "AST": 0,
         "OREB": 0,
         "DREB": 0,
@@ -902,32 +902,32 @@
         "3PTM": 0,
         "FTA": 0,
         "FTM": 0,
-        "+/-": 0,
+        "+/-": -4,
         "PF": 0
       },
       {
         "PLAYER": "Timo Schmidt",
         "GAMES": 1,
-        "MIN": 0,
+        "MIN": "31:00",
         "AST": 4,
         "OREB": 0,
         "DREB": 2,
         "TO": 8,
         "STL": 1,
         "BLK": 3,
-        "2PTA": 6,
-        "2PTM": 4,
+        "2PTA": 7,
+        "2PTM": 5,
         "3PTA": 4,
         "3PTM": 1,
         "FTA": 8,
         "FTM": 6,
-        "+/-": 0,
-        "PF": 0
+        "+/-": -7,
+        "PF": 3
       },
       {
         "PLAYER": "Nils Renfordt",
         "GAMES": 1,
-        "MIN": 0,
+        "MIN": "31:52",
         "AST": 3,
         "OREB": 0,
         "DREB": 5,
@@ -940,8 +940,8 @@
         "3PTM": 0,
         "FTA": 2,
         "FTM": 0,
-        "+/-": 0,
-        "PF": 0
+        "+/-": -19,
+        "PF": 1
       }
     ],
     "finished": true
