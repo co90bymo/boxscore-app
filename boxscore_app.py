@@ -391,11 +391,9 @@ elif page == "Player Stats":
         st.info("No players yet. Add some on the 'Add Game' page.")
 
     
-
-
-    # -------------------
-    # Page 3: Box Scores
-    # -------------------
+# -------------------
+# Page 3: Box Scores
+# -------------------
 elif page == "Box Scores":
     st.title("Box Scores")
 
@@ -409,9 +407,19 @@ elif page == "Box Scores":
             box_data = []
             for p in g.players:
                 pts = (p.two_ptm * 2) + (p.three_ptm * 3) + p.ftm
+
+                # Percentages
+                two_fg_pct = (p.two_ptm / p.two_pta * 100) if p.two_pta > 0 else 0
+                three_fg_pct = (p.three_ptm / p.three_pta * 100) if p.three_pta > 0 else 0
+                ft_pct = (p.ftm / p.fta * 100) if p.fta > 0 else 0
+
+                # Combined FG stats
+                fg_makes = p.two_ptm + p.three_ptm
+                fg_attempts = p.two_pta + p.three_pta
+                fg_pct = (fg_makes / fg_attempts * 100) if fg_attempts > 0 else 0
+
                 row = {
                     "PLAYER": p.name,
-                    "GAMES": p.games,
                     "MIN": p.mins,
                     "PTS": pts,
                     "AST": p.assists,
@@ -422,8 +430,13 @@ elif page == "Box Scores":
                     "STL": p.steals,
                     "BLK": p.blocks,
                     "2PT": f"{p.two_ptm}-{p.two_pta}",
+                    "2FG%": round(two_fg_pct, 1),
                     "3PT": f"{p.three_ptm}-{p.three_pta}",
+                    "3FG%": round(three_fg_pct, 1),
+                    "FG": f"{fg_makes}-{fg_attempts}",
+                    "FG%": round(fg_pct, 1),
                     "FT": f"{p.ftm}-{p.fta}",
+                    "FT%": round(ft_pct, 1),
                     "+/-": p.plus_minus,
                     "PF": p.pf
                 }
