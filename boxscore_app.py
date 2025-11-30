@@ -185,9 +185,7 @@ def get_player_total_stat(player_name, stat):
                     elif isinstance(value, (int, float)):
                         value = value * 60  # convert minutes to seconds
 
-                total += value
-            
-        
+                total += value      
 
     return total
 
@@ -317,7 +315,6 @@ if page == "Add Game":
                 st.rerun()
     else:
         st.info("No games yet.")
-
 # -------------------
 # Page 2: Player Stats
 # -------------------
@@ -340,6 +337,11 @@ elif page == "Player Stats":
             "TO": 0, "STL": 0, "BLK": 0, "2PTM": 0, "2PTA": 0,
             "3PTM": 0, "3PTA": 0, "FTM": 0, "FTA": 0, "+/-": 0, "PF": 0
         }
+
+        # Precompute total team minutes for tPIE
+        total_team_min = sum(get_player_total_stat(p.name, "MIN") for p in st.session_state.players)
+        if total_team_min == 0:
+            total_team_min = 1  # prevent division by zero
 
         for p in st.session_state.players:
             d = p.to_dict()
@@ -372,7 +374,7 @@ elif page == "Player Stats":
             fg_pct = (fg_makes / fg_attempts * 100) if fg_attempts > 0 else 0
             ft_pct = (ftm / fta * 100) if fta > 0 else 0
 
-               # --- Handle MIN as MM:SS ---
+            # --- Handle MIN as MM:SS ---
             min_seconds = get_player_total_stat(p.name, "MIN")
             if view_mode == "Per Game":
                 min_seconds = round(min_seconds / scale)
@@ -482,10 +484,53 @@ elif page == "Player Stats":
         }
 
         player_data.append(team_row)
+
+        # --- tPIE calculation for each player ---
+        for ordered_d in player_data:
+            if ordered_d["PLAYER"] == "👥 TEAM TOTAL":
+                continue  # skip team row
+
+            # Extract numeric values from row
+            pts = float(ordered_d["PTS"])
+            fg_makes = float(ordered_d["2PT"].split("-")[0]) + float(ordered_d["3PT"].split("-")[0])
+            ftm = float(ordered_d["FT"].split("-")[0])
+            fta = float(ordered_d["FT"].split("-")[1])
+            fg_attempts = float(ordered_d["2PT"].split("-")[1]) + float(ordered_d["3PT"].split("-")[1])
+            dreb = float(ordered_d["DREB"])
+            oreb = float(ordered_d["OREB"])
+            ast = float(ordered_d["AST"])
+            stl = float(ordered_d["STL"])
+            blk = float(ordered_d["BLK"])
+            pf = float(ordered_d["PF"])
+            to = float(ordered_d["TO"])
+
+            # player_minutes from MIN string (MM:SS)
+            min_parts = ordered_d["MIN"].split(":")
+            player_minutes = int(min_parts[0]) * 60 + int(min_parts[1])
+
+            tpie_minutes = (player_minutes / team_totals["MIN"]) * 100
+
+            player_total = pts + fg_makes + ftm - fg_attempts - fta + dreb + (0.5 * oreb) + ast + stl + (0.5 * blk) - pf - to
+            team_total_points = team_totals["2PTM"]*2 + team_totals["3PTM"]*3 + team_totals["FTM"]
+            team_test_total = (
+                team_total_points + team_totals["2PTM"] + team_totals["3PTM"] + team_totals["FTM"]
+                - team_totals["2PTA"] - team_totals["3PTA"] - team_totals["FTA"]
+                + team_totals["DREB"] + (0.5 * team_totals["OREB"]) + team_totals["AST"] + team_totals["STL"]
+                + (0.5 * team_totals["BLK"]) - team_totals["PF"] - team_totals["TO"]
+            )
+            tPIE = player_total / team_test_total
+            print("player total and team total:")
+            print(player_total)
+            print(team_test_total)
+            tPIE = tPIE * 100
+            ordered_d["tPIE"] = fmt(tPIE)
+
         st.dataframe(player_data, use_container_width=True)
 
     else:
         st.info("No players yet. Add some on the 'Add Game' page.")
+
+
 
 # -------------------
 # Page 3: Box Scores
