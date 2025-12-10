@@ -283,5 +283,24 @@
     "FTM": 0,
     "+/-": -10,
     "PF": 1
+  },
+  {
+    "PLAYER": "Lucas Otto",
+    "GAMES": 0,
+    "MIN": 0,
+    "AST": 0,
+    "OREB": 0,
+    "DREB": 0,
+    "TO": 0,
+    "STL": 0,
+    "BLK": 0,
+    "2PTA": 0,
+    "2PTM": 0,
+    "3PTA": 0,
+    "3PTM": 0,
+    "FTA": 0,
+    "FTM": 0,
+    "+/-": 0,
+    "PF": 0
   }
 ]

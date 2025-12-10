@@ -44,13 +44,13 @@ def run_game(current_game, save_games_func, save_players):
                     st.session_state.stats_state[p.name][st.session_state.selected_stat] -= 1
 
     # Input fields for +/- , PF, MIN
-    st.markdown("### Input values for +/- , PF, MIN:")
-    for p in current_game.players:
-        col_player, col_pm, col_pf, col_min = st.columns([2,1,1,1])
-        col_player.write(f"👤 {p.name}")
-        st.session_state.stats_state[p.name]["+/-"] = col_pm.number_input("+/-", value=st.session_state.stats_state[p.name]["+/-"], step=1, key=f"{p.name}_plusminus")
-        st.session_state.stats_state[p.name]["PF"] = col_pf.number_input("PF", value=st.session_state.stats_state[p.name]["PF"], step=1, key=f"{p.name}_pf")
-        st.session_state.stats_state[p.name]["MIN"] = col_min.number_input("MIN", value=st.session_state.stats_state[p.name]["MIN"], step=1, key=f"{p.name}_min")
+    #st.markdown("### Input values for +/- , PF, MIN:")
+    #for p in current_game.players:
+        #col_player, col_pm, col_pf, col_min = st.columns([2,1,1,1])
+        #col_player.write(f"👤 {p.name}")
+        #st.session_state.stats_state[p.name]["+/-"] = col_pm.number_input("+/-", value=st.session_state.stats_state[p.name]["+/-"], step=1, key=f"{p.name}_plusminus")
+        #st.session_state.stats_state[p.name]["PF"] = col_pf.number_input("PF", value=st.session_state.stats_state[p.name]["PF"], step=1, key=f"{p.name}_pf")
+        #st.session_state.stats_state[p.name]["MIN"] = col_min.number_input("MIN", value=st.session_state.stats_state[p.name]["MIN"], step=1, key=f"{p.name}_min")
 
     # Display live table
     data = []

@@ -8,7 +8,7 @@ from time_arithmetic import time_str_to_seconds, seconds_to_time_str, add_times
 # -------------------
 # Configuration
 # -------------------
-IS_ADMIN = False  # Set True for admin
+IS_ADMIN = False  # Set True for admin to add games
 PLAYER_FILE = "players.json"
 GAME_FILE = "games.json"
 
@@ -16,14 +16,14 @@ GAME_FILE = "games.json"
 # Player class
 # -------------------
 class Player:
-    def __init__(self, name: str, games=0, min=0, assists=0, dreb=0, oreb=0, turnovers=0, steals=0, blocks=0,
+    def __init__(self, name: str, games=0, min=0, assists=0, oreb=0, dreb=0, turnovers=0, steals=0, blocks=0,
                  two_pta=0, two_ptm=0, three_pta=0, three_ptm=0, fta=0, ftm=0, plus_minus=0, pf=0):
         self.games = games
         self.name = name
         self.min = min
         self.assists = assists
-        self.dreb = dreb
         self.oreb = oreb
+        self.dreb = dreb
         self.turnovers = turnovers
         self.steals = steals
         self.blocks = blocks
@@ -42,8 +42,8 @@ class Player:
             "GAMES": self.games,
             "MIN": self.min,
             "AST": self.assists,
-            "OREB": self.dreb,
-            "DREB": self.oreb,
+            "OREB": self.oreb,
+            "DREB": self.dreb,
             "TO": self.turnovers,
             "STL": self.steals,
             "BLK": self.blocks,
@@ -67,8 +67,8 @@ class Player:
                 games=data.get("GAMES", 0),
                 min=data.get("MIN", 0),
                 assists=data.get("AST", 0),
-                dreb=data.get("DREB", 0),
                 oreb=data.get("OREB", 0),
+                dreb=data.get("DREB", 0),
                 turnovers=data.get("TO", 0),
                 steals=data.get("STL", 0),
                 blocks=data.get("BLK", 0),
@@ -496,8 +496,8 @@ elif page == "Player Stats":
             ftm = float(ordered_d["FT"].split("-")[0])
             fta = float(ordered_d["FT"].split("-")[1])
             fg_attempts = float(ordered_d["2PT"].split("-")[1]) + float(ordered_d["3PT"].split("-")[1])
-            dreb = float(ordered_d["DREB"])
             oreb = float(ordered_d["OREB"])
+            dreb = float(ordered_d["DREB"])
             ast = float(ordered_d["AST"])
             stl = float(ordered_d["STL"])
             blk = float(ordered_d["BLK"])
