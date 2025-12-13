@@ -8,7 +8,7 @@ from time_arithmetic import time_str_to_seconds, seconds_to_time_str, add_times
 # -------------------
 # Configuration
 # -------------------
-IS_ADMIN = True  # Set True for admin to add games
+IS_ADMIN = False  # Set True for admin to add games
 PLAYER_FILE = "players.json"
 GAME_FILE = "games.json"
 
