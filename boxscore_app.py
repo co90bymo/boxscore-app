@@ -434,7 +434,7 @@ elif page == "Player Stats":
         elif view_mode == "Per Game":
             scale = total_games_played
         else:
-            scale = team_min / 36
+            scale = team_min / 25
 
         two_ptm = team_totals["2PTM"] / scale
         two_pta = team_totals["2PTA"] / scale
