@@ -388,7 +388,7 @@ elif page == "Player Stats":
             if view_mode == "Per Game":
                 min_sec = round(total_min_sec / games)
             elif view_mode == "Per 25":
-                min_sec = 36 * 60
+                min_sec = 25 * 60
             else:
                 min_sec = total_min_sec
 
@@ -455,7 +455,7 @@ elif page == "Player Stats":
             "PLAYER": "👥 TEAM TOTAL",
             "GAMES": fmt(1 if view_mode != "Total" else total_games_played),
             "MIN": seconds_to_time_str(
-                int(36 * 60 if view_mode == "Per 25" else team_totals["MIN"])
+                int(25 * 60 if view_mode == "Per 25" else team_totals["MIN"])
             ),
             "PTS": fmt(pts),
             "AST": fmt(team_totals["AST"] / scale),
